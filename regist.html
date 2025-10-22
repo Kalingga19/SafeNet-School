@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi - SafeNet School</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1100px;
+            min-height: 700px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .register-side {
+            flex: 1;
+            background: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            max-height: 700px;
+        }
+        
+        .graphic-side {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            margin-top: 80px;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-number {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--gray-light);
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .step-text {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 17px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gray-light);
+            z-index: 1;
+        }
+        
+        .progress-step.active .step-number {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .progress-step.active .step-text {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .progress-step.completed .step-number {
+            background: var(--success);
+            color: white;
+        }
+        
+        .form-container {
+            display: none;
+        }
+        
+        .form-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--error);
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .password-strength {
+            height: 4px;
+            background: var(--gray-light);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            width: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .strength-weak {
+            background: var(--error);
+            width: 33%;
+        }
+        
+        .strength-medium {
+            background: var(--accent);
+            width: 66%;
+        }
+        
+        .strength-strong {
+            background: var(--success);
+            width: 100%;
+        }
+        
+        .password-hint {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .terms input {
+            width: auto;
+            margin-top: 3px;
+        }
+        
+        .terms label {
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        
+        .terms a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .terms a:hover {
+            text-decoration: underline;
+        }
+        
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+        
+        .btn:disabled {
+            background-color: var(--gray-light);
+            color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .graphic-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .graphic-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .features-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .features-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .feature-icon {
+            background: rgba(255, 255, 255, 0.2);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .testimonial {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+        }
+        
+        .graphic-bg {
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .graphic-bg-2 {
+            position: absolute;
+            top: -80px;
+            left: -80px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .graphic-side {
+                order: -1;
+                padding: 30px;
+            }
+            
+            .register-side {
+                padding: 30px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-side">
+            <h1>Buat Akun Baru</h1>
+            <p class="subtitle">Daftar untuk mengakses platform literasi digital SafeNet School</p>
+
+            <div class="progress-bar">
+                <div class="progress-step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Data Pribadi</div>
+                </div>
+                <div class="progress-step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Data Sekolah</div>
+                </div>
+                <div class="progress-step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Akun</div>
+                </div>
+            </div>
+
+            <div class="form-container active" id="formStep1">
+                <form id="personalForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName" class="required">Nama Depan</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Masukkan nama depan">
+                            <div class="error-message" id="firstNameError">Nama depan harus diisi</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lastName">Nama Belakang</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Masukkan nama belakang">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="required">Email</label>
+                        <div class="input-group">
+                            <input type="email" id="email" name="email" placeholder="contoh@email.com">
+                            <div class="input-icon">✉️</div>
+                        </div>
+                        <div class="error-message" id="emailError">Format email tidak valid</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Nomor Telepon</label>
+                        <div class="input-group">
+                            <input type="tel" id="phone" name="phone" placeholder="08xxxxxxxxxx">
+                            <div class="input-icon">📱</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="birthDate" class="required">Tanggal Lahir</label>
+                        <input type="date" id="birthDate" name="birthDate">
+                        <div class="error-message" id="birthDateError">Tanggal lahir harus diisi</div>
+                    </div>
+                    
+                    <div class="form-navigation">
+                        <div></div>
+                        <button type="button" class="btn btn-primary" id="nextToStep2">Selanjutnya</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="form-container" id="formStep2">
+                <form id="schoolForm">
+                    <div class="form-group">
+                        <label for="school" class="required">Sekolah</label>
+                        <select id="school" name="school">
+                            <option value="">Pilih sekolah</option>
+                            <option value="sma1">SMA Negeri 1 Wonogiri</option>
+                            <option value="sma2">SMA Negeri 2 Wonogiri</option>
+                            <option value="sma3">SMA Negeri 3 Wonogiri</option>
+                            <option value="smanegeri">SMA Negeri Lainnya</option>
+                            <option value="swasta">SMA Swasta</option>
+                        </select>
+                        <div class="error-message" id="schoolError">Pilih sekolah terlebih dahulu</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="grade" class="required">Kelas</label>
+                            <select id="grade" name="grade">
+                                <option value="">Pilih kelas</option>
+                                <option value="x">Kelas X</option>
+                                <option value="xi">Kelas XI</option>
+                                <option value="xii">Kelas XII</option>
+                            </select>
+                            <div class="error-message" id="gradeError">Pilih kelas terlebih dahulu</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="major" class="required">Jurusan</label>
+                            <select id="major" name="major">
+                                <option value="">Pilih jurusan</option>
+                                <option value="ipa">Ilmu Pengetahuan Alam (IPA)</option>
+                                <option value="ips">Ilmu Pengetahuan Sosial (IPS)</option>
+                                <option value="bahasa">Bahasa</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                            <div class="error-message" id="majorError">Pilih jurusan terlebih dahulu</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="studentId">Nomor Induk Siswa (NIS)</label>
+                        <input type="text" id="studentId" name="studentId" placeholder="Masukkan NIS">
+                    </div>
+                    
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-secondary" id="backToStep1">Kembali</button>
+                        <button type="button" class="btn btn-primary" id="nextToStep3">Selanjutnya</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="form-container" id="formStep3">
+                <form id="accountForm">
+                    <div class="form-group">
+                        <label for="username" class="required">Username</label>
+                        <div class="input-group">
+                            <input type="text" id="username" name="username" placeholder="Pilih username unik">
+                            <div class="input-icon">👤</div>
+                        </div>
+                        <div class="error-message" id="usernameError">Username harus diisi</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="required">Password</label>
+                        <div class="input-group">
+                            <input type="password" id="password" name="password" placeholder="Buat password yang kuat">
+                            <div class="input-icon">🔒</div>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-fill" id="passwordStrength"></div>
+                        </div>
+                        <div class="password-hint">Gunakan minimal 8 karakter dengan kombinasi huruf, angka, dan simbol</div>
+                        <div class="error-message" id="passwordError">Password tidak memenuhi kriteria keamanan</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword" class="required">Konfirmasi Password</label>
+                        <div class="input-group">
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Ketik ulang password">
+                            <div class="input-icon">🔒</div>
+                        </div>
+                        <div class="error-message" id="confirmPasswordError">Password tidak cocok</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="role" class="required">Peran</label>
+                        <select id="role" name="role">
+                            <option value="">Pilih peran</option>
+                            <option value="student">Siswa</option>
+                            <option value="teacher">Guru</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                        <div class="error-message" id="roleError">Pilih peran terlebih dahulu</div>
+                    </div>
+                    
+                    <div class="terms">
+                        <input type="checkbox" id="agreeTerms" name="agreeTerms">
+                        <label for="agreeTerms">Saya menyetujui <a href="#">Syarat dan Ketentuan</a> serta <a href="#">Kebijakan Privasi</a> SafeNet School</label>
+                    </div>
+                    <div class="error-message" id="termsError">Anda harus menyetujui syarat dan ketentuan</div>
+                    
+                    <div class="form-navigation">
+                        <button type="button" class="btn btn-secondary" id="backToStep2">Kembali</button>
+                        <button type="submit" class="btn btn-primary" id="submitRegistration">Daftar</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="login-link">
+                <p>Sudah punya akun? <a href="login.html">Login di sini</a></p>
+            </div>
+        </div>
+        
+        <div class="graphic-side">
+            <div class="graphic-bg"></div>
+            <div class="graphic-bg-2"></div>
+            
+            <h2 class="graphic-title">Bergabung dengan SafeNet School</h2>
+            <p class="graphic-subtitle">Tingkatkan kesadaran keamanan digital Anda bersama ribuan siswa lainnya</p>
+            
+            <ul class="features-list">
+                <li>
+                    <div class="feature-icon">📚</div>
+                    <div>Akses ke materi literasi digital terbaru</div>
+                </li>
+                <li>
+                    <div class="feature-icon">🧩</div>
+                    <div>Kuis dan simulasi interaktif</div>
+                </li>
+                <li>
+                    <div class="feature-icon">🏆</div>
+                    <div>Kompetisi seru antar sekolah</div>
+                </li>
+                <li>
+                    <div class="feature-icon">📊</div>
+                    <div>Pantau perkembangan belajar Anda</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        const formStep1 = document.getElementById('formStep1');
+        const formStep2 = document.getElementById('formStep2');
+        const formStep3 = document.getElementById('formStep3');
+        
+        const nextToStep2 = document.getElementById('nextToStep2');
+        const nextToStep3 = document.getElementById('nextToStep3');
+        const backToStep1 = document.getElementById('backToStep1');
+        const backToStep2 = document.getElementById('backToStep2');
+        const submitRegistration = document.getElementById('submitRegistration');
+
+        const passwordInput = document.getElementById('password');
+        const passwordStrength = document.getElementById('passwordStrength');
+        
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+            passwordStrength.className = 'strength-fill';
+
+            if (strength === 0) {
+                passwordStrength.style.width = '0';
+            } else if (strength === 1) {
+                passwordStrength.classList.add('strength-weak');
+            } else if (strength === 2 || strength === 3) {
+                passwordStrength.classList.add('strength-medium');
+            } else {
+                passwordStrength.classList.add('strength-strong');
+            }
+        });
+
+        function validateStep1() {
+            let isValid = true;
+
+            const firstName = document.getElementById('firstName');
+            const firstNameError = document.getElementById('firstNameError');
+            if (!firstName.value.trim()) {
+                firstNameError.style.display = 'block';
+                isValid = false;
+            } else {
+                firstNameError.style.display = 'none';
+            }
+
+            const email = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim() || !emailRegex.test(email.value)) {
+                emailError.style.display = 'block';
+                isValid = false;
+            } else {
+                emailError.style.display = 'none';
+            }
+
+            const birthDate = document.getElementById('birthDate');
+            const birthDateError = document.getElementById('birthDateError');
+            if (!birthDate.value) {
+                birthDateError.style.display = 'block';
+                isValid = false;
+            } else {
+                birthDateError.style.display = 'none';
+            }
+            
+            return isValid;
+        }
+        
+        function validateStep2() {
+            let isValid = true;
+
+            const school = document.getElementById('school');
+            const schoolError = document.getElementById('schoolError');
+            if (!school.value) {
+                schoolError.style.display = 'block';
+                isValid = false;
+            } else {
+                schoolError.style.display = 'none';
+            }
+
+            const grade = document.getElementById('grade');
+            const gradeError = document.getElementById('gradeError');
+            if (!grade.value) {
+                gradeError.style.display = 'block';
+                isValid = false;
+            } else {
+                gradeError.style.display = 'none';
+            }
+
+            const major = document.getElementById('major');
+            const majorError = document.getElementById('majorError');
+            if (!major.value) {
+                majorError.style.display = 'block';
+                isValid = false;
+            } else {
+                majorError.style.display = 'none';
+            }
+            
+            return isValid;
+        }
+        
+        function validateStep3() {
+            let isValid = true;
+
+            const username = document.getElementById('username');
+            const usernameError = document.getElementById('usernameError');
+            if (!username.value.trim()) {
+                usernameError.style.display = 'block';
+                isValid = false;
+            } else {
+                usernameError.style.display = 'none';
+            }
+
+            const password = document.getElementById('password');
+            const passwordError = document.getElementById('passwordError');
+            if (password.value.length < 8) {
+                passwordError.style.display = 'block';
+                isValid = false;
+            } else {
+                passwordError.style.display = 'none';
+            }
+
+            const confirmPassword = document.getElementById('confirmPassword');
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            if (confirmPassword.value !== password.value) {
+                confirmPasswordError.style.display = 'block';
+                isValid = false;
+            } else {
+                confirmPasswordError.style.display = 'none';
+            }
+
+            const role = document.getElementById('role');
+            const roleError = document.getElementById('roleError');
+            if (!role.value) {
+                roleError.style.display = 'block';
+                isValid = false;
+            } else {
+                roleError.style.display = 'none';
+            }
+
+            const agreeTerms = document.getElementById('agreeTerms');
+            const termsError = document.getElementById('termsError');
+            if (!agreeTerms.checked) {
+                termsError.style.display = 'block';
+                isValid = false;
+            } else {
+                termsError.style.display = 'none';
+            }
+            
+            return isValid;
+        }
+
+        nextToStep2.addEventListener('click', function() {
+            if (validateStep1()) {
+                formStep1.classList.remove('active');
+                formStep2.classList.add('active');
+                
+                step1.classList.remove('active');
+                step1.classList.add('completed');
+                step2.classList.add('active');
+            }
+        });
+        
+        nextToStep3.addEventListener('click', function() {
+            if (validateStep2()) {
+                formStep2.classList.remove('active');
+                formStep3.classList.add('active');
+                
+                step2.classList.remove('active');
+                step2.classList.add('completed');
+                step3.classList.add('active');
+            }
+        });
+        
+        backToStep1.addEventListener('click', function() {
+            formStep2.classList.remove('active');
+            formStep1.classList.add('active');
+            
+            step2.classList.remove('active');
+            step1.classList.add('active');
+        });
+        
+        backToStep2.addEventListener('click', function() {
+            formStep3.classList.remove('active');
+            formStep2.classList.add('active');
+            
+            step3.classList.remove('active');
+            step2.classList.add('active');
+        });
+        
+        submitRegistration.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (validateStep3()) {
+                alert('Pendaftaran berhasil! Silakan login dengan akun Anda.');
+            }
+        });
+        
+        const confirmPassword = document.getElementById('confirmPassword');
+        confirmPassword.addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            
+            if (this.value !== password) {
+                confirmPasswordError.style.display = 'block';
+            } else {
+                confirmPasswordError.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
